@@ -13,18 +13,18 @@ public class MySqlUserQueryManager implements UserQueryManager {
 
     Connection mySqlConnection = new MySqlConnector().connect();
 
+    private String sqlQueryString;
+
     @Override
     public User getUserById(String id) throws UserNotFoundException {
 
-        String sql = "SELECT * FROM User WHERE id=?";
+        sqlQueryString = "SELECT * FROM User WHERE id=?";
         User user = null;
         ResultSet rs = null;
-        PreparedStatement ps = null;
 
-        try {
-            ps = mySqlConnection.prepareStatement(sql);
-            ps.setString(1, id);
-            rs = ps.executeQuery();
+        try(PreparedStatement preparedStatement = mySqlConnection.prepareStatement(sqlQueryString)) {
+            preparedStatement.setString(1, id);
+            rs = preparedStatement.executeQuery();
             if (rs.next()) {
                 String username = rs.getString("username");
                 String password = rs.getString("password");
@@ -36,13 +36,6 @@ public class MySqlUserQueryManager implements UserQueryManager {
             }
         } catch (SQLException ex) {
             System.err.println(ex);
-        } finally {
-            try {
-                rs.close();
-                ps.close();
-            } catch (SQLException e) {
-                System.err.println(e);
-            }
         }
         return user;
     }
@@ -50,15 +43,13 @@ public class MySqlUserQueryManager implements UserQueryManager {
     @Override
     public User getUserByUsername(String username) throws UserNotFoundException {
 
-        String sql = "SELECT * FROM User WHERE username=?";
+        sqlQueryString = "SELECT * FROM User WHERE username=?";
         User user = null;
         ResultSet rs = null;
-        PreparedStatement ps = null;
 
-        try {
-            ps = mySqlConnection.prepareStatement(sql);
-            ps.setString(1, username);
-            rs = ps.executeQuery();
+        try(PreparedStatement preparedStatement = mySqlConnection.prepareStatement(sqlQueryString)) {
+            preparedStatement.setString(1, username);
+            rs = preparedStatement.executeQuery();
             String id = null;
             if (rs.next()) {
                 id = rs.getString("id");
@@ -71,13 +62,6 @@ public class MySqlUserQueryManager implements UserQueryManager {
             }
         } catch (SQLException ex) {
             System.err.println(ex);
-        } finally {
-            try {
-                rs.close();
-                ps.close();
-            } catch (SQLException e) {
-                System.err.println(e);
-            }
         }
         return user;
     }
@@ -85,50 +69,34 @@ public class MySqlUserQueryManager implements UserQueryManager {
     @Override
     public void addUser(User user) throws UserExistingException {
 
-        String sql = "INSERT INTO User(username,password,email) VALUES(?,?,?)";
-        PreparedStatement stmt = null;
-        try {
+        sqlQueryString = "INSERT INTO User(username,password,email) VALUES(?,?,?)";
+        try(PreparedStatement preparedStatement = mySqlConnection.prepareStatement(sqlQueryString)) {
             try {
                 if (this.getUserByUsername(user.getUsername()) != null) {
                     throw new UserExistingException(user.getUsername());
                 }
             } catch (UserNotFoundException e) {
             }
-            stmt = mySqlConnection.prepareStatement(sql);
-            stmt.setString(3, user.getEmail());
-            stmt.setString(2, user.getPassword());
-            stmt.setString(1, user.getUsername());
-            stmt.executeUpdate();
+            preparedStatement.setString(3, user.getEmail());
+            preparedStatement.setString(2, user.getPassword());
+            preparedStatement.setString(1, user.getUsername());
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
             System.err.println(e);
-        } finally {
-            try {
-                stmt.close();
-            } catch (SQLException e) {
-                System.err.println(e);
-            }
         }
     }
 
     @Override
     public void updateUserToken(String userId, String token) {
 
-        String sql = "UPDATE User SET token=? WHERE id=?";
-        PreparedStatement ps = null;
+        sqlQueryString = "UPDATE User SET token=? WHERE id=?";
 
-        try {
-            ps = mySqlConnection.prepareStatement(sql);
-            ps.setString(2, userId);
-            ps.setString(1, token);
-            ps.executeUpdate();
+        try(PreparedStatement preparedStatement = mySqlConnection.prepareStatement(sqlQueryString)) {
+            preparedStatement.setString(2, userId);
+            preparedStatement.setString(1, token);
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
             System.err.println(e);
-        } finally {
-            try {
-                ps.close();
-            } catch (SQLException e) {
-                System.err.println(e);
-            }
         }
     }
 

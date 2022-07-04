@@ -14,15 +14,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class MySqlTravelQueryManager implements TravelQueryManager{
+public class MySqlTravelQueryManager implements TravelQueryManager {
 
     private final Connection mySqlConnection = new MySqlConnector().connect();
+    private String sqlQueryString;
 
     @Override
     public void addTravel(Travel travel) {
 
-        String sql = "INSERT INTO Travel(id_user,route,stages,date,vehicle) VALUES (?,?,?,?,?)";
-        PreparedStatement stmt = null;
+        sqlQueryString = "INSERT INTO Travel(id_user,route,stages,date,vehicle) VALUES (?,?,?,?,?)";
 
         //Add one day
         Calendar c = Calendar.getInstance();
@@ -30,40 +30,31 @@ public class MySqlTravelQueryManager implements TravelQueryManager{
         c.add(Calendar.DATE, 1);
         travel.setDate(c.getTime());
 
-        try {
-            stmt = mySqlConnection.prepareStatement(sql);
-            stmt.setString(5, travel.getVehicle());
-            stmt.setDate(4, new java.sql.Date(travel.getDate().getTime()));
-            stmt.setString(3, travel.getPointsOfStages().toString());
-            stmt.setString(2, travel.getPointsOfRoute().toString());
-            stmt.setString(1, travel.getUserdId());
-            stmt.executeUpdate();
+        try (PreparedStatement preparedStatement = mySqlConnection.prepareStatement(sqlQueryString)) {
+            preparedStatement.setString(5, travel.getVehicle());
+            preparedStatement.setDate(4, new java.sql.Date(travel.getDate().getTime()));
+            preparedStatement.setString(3, travel.getPointsOfStages().toString());
+            preparedStatement.setString(2, travel.getPointsOfRoute().toString());
+            preparedStatement.setString(1, travel.getUserdId());
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
             System.err.println(e);
-        } finally {
-            try {
-                stmt.close();
-            } catch (SQLException e) {
-                System.err.println(e);
-            }
         }
     }
 
     @Override
     public List<Travel> getTravels(String userId) {
 
-        String sql = "SELECT id, route, stages, date, vehicle from Travel WHERE id_user=?";
-        PreparedStatement stmt = null;
+        sqlQueryString = "SELECT id, route, stages, date, vehicle from Travel WHERE id_user=?";
         ResultSet rs;
         Matcher matcher;
         Pattern pattern;
         String regex;
         List travels = new ArrayList<Travel>();
 
-        try {
-            stmt = mySqlConnection.prepareStatement(sql);
-            stmt.setString(1, userId);
-            rs = stmt.executeQuery();
+        try (PreparedStatement preparedStatement = mySqlConnection.prepareStatement(sqlQueryString)) {
+            preparedStatement.setString(1, userId);
+            rs = preparedStatement.executeQuery();
             regex = "(\\[\\-?\\d*.\\d*, \\-?\\d*.\\d*\\])";
             pattern = Pattern.compile(regex);
             while (rs.next()) {
@@ -84,12 +75,6 @@ public class MySqlTravelQueryManager implements TravelQueryManager{
             }
         } catch (SQLException e) {
             System.err.println(e);
-        } finally {
-            try {
-                stmt.close();
-            } catch (SQLException e) {
-                System.err.println(e);
-            }
         }
         return travels;
     }
@@ -97,19 +82,17 @@ public class MySqlTravelQueryManager implements TravelQueryManager{
     @Override
     public List<Travel> getTravels(String userId, Date date) {
 
-        String sql = "SELECT id, route, stages, vehicle from Travel WHERE id_user=? AND date=?";
-        PreparedStatement stmt = null;
+        sqlQueryString = "SELECT id, route, stages, vehicle from Travel WHERE id_user=? AND date=?";
         ResultSet rs;
         Matcher matcher;
         Pattern pattern;
         String regex;
         List<Travel> travels = new ArrayList<>();
 
-        try {
-            stmt = mySqlConnection.prepareStatement(sql);
-            stmt.setString(1, userId);
-            stmt.setDate(2, new java.sql.Date(date.getTime()));
-            rs = stmt.executeQuery();
+        try (PreparedStatement preparedStatement = mySqlConnection.prepareStatement(sqlQueryString)) {
+            preparedStatement.setString(1, userId);
+            preparedStatement.setDate(2, new java.sql.Date(date.getTime()));
+            rs = preparedStatement.executeQuery();
             regex = "(\\[\\-?\\d*.\\d*, \\-?\\d*.\\d*\\])";
             pattern = Pattern.compile(regex);
             while (rs.next()) {
@@ -129,12 +112,6 @@ public class MySqlTravelQueryManager implements TravelQueryManager{
             }
         } catch (SQLException e) {
             System.err.println(e);
-        } finally {
-            try {
-                stmt.close();
-            } catch (SQLException e) {
-                System.err.println(e);
-            }
         }
         return travels;
     }
@@ -142,30 +119,22 @@ public class MySqlTravelQueryManager implements TravelQueryManager{
     @Override
     public void modifyTravel(Travel travel) {
 
-        String sql = "UPDATE Travel SET route=?,stages=?,date=?,vehicle=? WHERE id=?";
-        PreparedStatement ps = null;
+        sqlQueryString = "UPDATE Travel SET route=?,stages=?,date=?,vehicle=? WHERE id=?";
         //Add one day
         Calendar c = Calendar.getInstance();
         c.setTime(travel.getDate());
         c.add(Calendar.DATE, 1);
         travel.setDate(c.getTime());
 
-        try {
-            ps = mySqlConnection.prepareStatement(sql);
-            ps.setString(1, travel.getPointsOfRoute().toString());
-            ps.setString(2, travel.getPointsOfStages().toString());
-            ps.setDate(3, new java.sql.Date(travel.getDate().getTime()));
-            ps.setString(4, travel.getVehicle());
-            ps.setString(5, travel.getId());
-            ps.executeUpdate();
+        try (PreparedStatement preparedStatement = mySqlConnection.prepareStatement(sqlQueryString)) {
+            preparedStatement.setString(1, travel.getPointsOfRoute().toString());
+            preparedStatement.setString(2, travel.getPointsOfStages().toString());
+            preparedStatement.setDate(3, new java.sql.Date(travel.getDate().getTime()));
+            preparedStatement.setString(4, travel.getVehicle());
+            preparedStatement.setString(5, travel.getId());
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
             System.err.println(e);
-        } finally {
-            try {
-                ps.close();
-            } catch (SQLException e) {
-                System.err.println(e);
-            }
         }
     }
 
