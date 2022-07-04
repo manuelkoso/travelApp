@@ -43,43 +43,6 @@ public class MySqlTravelQueryManager implements TravelQueryManager {
     }
 
     @Override
-    public List<Travel> getTravels(String userId) {
-
-        sqlQueryString = "SELECT id, route, stages, date, vehicle from Travel WHERE id_user=?";
-        ResultSet rs;
-        Matcher matcher;
-        Pattern pattern;
-        String regex;
-        List<Travel> travels = new ArrayList<>();
-
-        try (PreparedStatement preparedStatement = mySqlConnection.prepareStatement(sqlQueryString)) {
-            preparedStatement.setString(1, userId);
-            rs = preparedStatement.executeQuery();
-            regex = "(\\[\\-?\\d*.\\d*, \\-?\\d*.\\d*\\])";
-            pattern = Pattern.compile(regex);
-            while (rs.next()) {
-                List<String> pointsOfRoute = new ArrayList<>();
-                List<String> pointsOfStages = new ArrayList<>();
-                String vehicle = rs.getString("vehicle");
-                Date date = rs.getDate("date");
-                matcher = pattern.matcher(rs.getString("route"));
-                while (matcher.find()) {
-                    pointsOfRoute.add(matcher.group(1));
-                }
-                matcher = pattern.matcher(rs.getString("stages"));
-                while (matcher.find()) {
-                    pointsOfStages.add(matcher.group(1));
-                }
-                String id = rs.getString("id");
-                travels.add(new Travel(id, userId, date, vehicle, pointsOfRoute, pointsOfStages));
-            }
-        } catch (SQLException e) {
-            System.err.println(e);
-        }
-        return travels;
-    }
-
-    @Override
     public List<Travel> getTravels(String userId, Date date) {
 
         sqlQueryString = "SELECT id, route, stages, vehicle from Travel WHERE id_user=? AND date=?";

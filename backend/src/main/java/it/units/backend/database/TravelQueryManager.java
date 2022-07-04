@@ -11,8 +11,6 @@ public interface TravelQueryManager {
 
     List<Travel> getTravels(String userId, Date date);
 
-    List<Travel> getTravels(String userId);
-
     void modifyTravel(Travel travel);
 
 }
