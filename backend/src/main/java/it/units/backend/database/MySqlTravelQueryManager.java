@@ -24,18 +24,18 @@ public class MySqlTravelQueryManager implements TravelQueryManager {
 
         sqlQueryString = "INSERT INTO Travel(id_user,route,stages,date,vehicle) VALUES (?,?,?,?,?)";
 
-        //Add one day
+        //To refactor
         Calendar c = Calendar.getInstance();
         c.setTime(travel.getDate());
         c.add(Calendar.DATE, 1);
         travel.setDate(c.getTime());
 
         try (PreparedStatement preparedStatement = mySqlConnection.prepareStatement(sqlQueryString)) {
-            preparedStatement.setString(5, travel.getVehicle());
-            preparedStatement.setDate(4, new java.sql.Date(travel.getDate().getTime()));
-            preparedStatement.setString(3, travel.getPointsOfStages().toString());
-            preparedStatement.setString(2, travel.getPointsOfRoute().toString());
             preparedStatement.setString(1, travel.getUserdId());
+            preparedStatement.setString(2, travel.getPointsOfRoute().toString());
+            preparedStatement.setString(3, travel.getPointsOfStages().toString());
+            preparedStatement.setDate(4, new java.sql.Date(travel.getDate().getTime()));
+            preparedStatement.setString(5, travel.getVehicle());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             System.err.println(e);
@@ -46,31 +46,26 @@ public class MySqlTravelQueryManager implements TravelQueryManager {
     public List<Travel> getTravels(String userId, Date date) {
 
         sqlQueryString = "SELECT id, route, stages, vehicle from Travel WHERE id_user=? AND date=?";
-        ResultSet rs;
-        Matcher matcher;
-        Pattern pattern;
-        String regex;
         List<Travel> travels = new ArrayList<>();
 
         try (PreparedStatement preparedStatement = mySqlConnection.prepareStatement(sqlQueryString)) {
             preparedStatement.setString(1, userId);
             preparedStatement.setDate(2, new java.sql.Date(date.getTime()));
-            rs = preparedStatement.executeQuery();
-            regex = "(\\[\\-?\\d*.\\d*, \\-?\\d*.\\d*\\])";
-            pattern = Pattern.compile(regex);
-            while (rs.next()) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+            Pattern pattern = Pattern.compile("(\\[\\-?\\d*.\\d*, \\-?\\d*.\\d*\\])");
+            while (resultSet.next()) {
                 List<String> pointsOfRoute = new ArrayList<>();
                 List<String> pointsOfStages = new ArrayList<>();
-                String vehicle = rs.getString("vehicle");
-                matcher = pattern.matcher(rs.getString("route"));
+                String vehicle = resultSet.getString("vehicle");
+                Matcher matcher = pattern.matcher(resultSet.getString("route"));
                 while (matcher.find()) {
                     pointsOfRoute.add(matcher.group(1));
                 }
-                matcher = pattern.matcher(rs.getString("stages"));
+                matcher = pattern.matcher(resultSet.getString("stages"));
                 while (matcher.find()) {
                     pointsOfStages.add(matcher.group(1));
                 }
-                String id = rs.getString("id");
+                String id = resultSet.getString("id");
                 travels.add(new Travel(id, vehicle, pointsOfRoute, pointsOfStages));
             }
         } catch (SQLException e) {
@@ -83,7 +78,7 @@ public class MySqlTravelQueryManager implements TravelQueryManager {
     public void modifyTravel(Travel travel) {
 
         sqlQueryString = "UPDATE Travel SET route=?,stages=?,date=?,vehicle=? WHERE id=?";
-        //Add one day
+        //To refactor
         Calendar c = Calendar.getInstance();
         c.setTime(travel.getDate());
         c.add(Calendar.DATE, 1);
