@@ -50,7 +50,7 @@ public class MySqlTravelQueryManager implements TravelQueryManager {
         Matcher matcher;
         Pattern pattern;
         String regex;
-        List travels = new ArrayList<Travel>();
+        List<Travel> travels = new ArrayList<>();
 
         try (PreparedStatement preparedStatement = mySqlConnection.prepareStatement(sqlQueryString)) {
             preparedStatement.setString(1, userId);
@@ -58,8 +58,8 @@ public class MySqlTravelQueryManager implements TravelQueryManager {
             regex = "(\\[\\-?\\d*.\\d*, \\-?\\d*.\\d*\\])";
             pattern = Pattern.compile(regex);
             while (rs.next()) {
-                List pointsOfRoute = new ArrayList<>();
-                List pointsOfStages = new ArrayList<>();
+                List<String> pointsOfRoute = new ArrayList<>();
+                List<String> pointsOfStages = new ArrayList<>();
                 String vehicle = rs.getString("vehicle");
                 Date date = rs.getDate("date");
                 matcher = pattern.matcher(rs.getString("route"));
@@ -96,8 +96,8 @@ public class MySqlTravelQueryManager implements TravelQueryManager {
             regex = "(\\[\\-?\\d*.\\d*, \\-?\\d*.\\d*\\])";
             pattern = Pattern.compile(regex);
             while (rs.next()) {
-                List pointsOfRoute = new ArrayList<>();
-                List pointsOfStages = new ArrayList<>();
+                List<String> pointsOfRoute = new ArrayList<>();
+                List<String> pointsOfStages = new ArrayList<>();
                 String vehicle = rs.getString("vehicle");
                 matcher = pattern.matcher(rs.getString("route"));
                 while (matcher.find()) {

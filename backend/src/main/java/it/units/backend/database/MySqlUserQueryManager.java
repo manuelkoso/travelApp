@@ -22,7 +22,7 @@ public class MySqlUserQueryManager implements UserQueryManager {
         User user = null;
         ResultSet rs = null;
 
-        try(PreparedStatement preparedStatement = mySqlConnection.prepareStatement(sqlQueryString)) {
+        try (PreparedStatement preparedStatement = mySqlConnection.prepareStatement(sqlQueryString)) {
             preparedStatement.setString(1, id);
             rs = preparedStatement.executeQuery();
             if (rs.next()) {
@@ -47,7 +47,7 @@ public class MySqlUserQueryManager implements UserQueryManager {
         User user = null;
         ResultSet rs = null;
 
-        try(PreparedStatement preparedStatement = mySqlConnection.prepareStatement(sqlQueryString)) {
+        try (PreparedStatement preparedStatement = mySqlConnection.prepareStatement(sqlQueryString)) {
             preparedStatement.setString(1, username);
             rs = preparedStatement.executeQuery();
             String id = null;
@@ -70,17 +70,17 @@ public class MySqlUserQueryManager implements UserQueryManager {
     public void addUser(User user) throws UserExistingException {
 
         sqlQueryString = "INSERT INTO User(username,password,email) VALUES(?,?,?)";
-        try(PreparedStatement preparedStatement = mySqlConnection.prepareStatement(sqlQueryString)) {
+        try (PreparedStatement preparedStatement = mySqlConnection.prepareStatement(sqlQueryString)) {
             try {
                 if (this.getUserByUsername(user.getUsername()) != null) {
                     throw new UserExistingException(user.getUsername());
                 }
             } catch (UserNotFoundException e) {
+                preparedStatement.setString(3, user.getEmail());
+                preparedStatement.setString(2, user.getPassword());
+                preparedStatement.setString(1, user.getUsername());
+                preparedStatement.executeUpdate();
             }
-            preparedStatement.setString(3, user.getEmail());
-            preparedStatement.setString(2, user.getPassword());
-            preparedStatement.setString(1, user.getUsername());
-            preparedStatement.executeUpdate();
         } catch (SQLException e) {
             System.err.println(e);
         }
@@ -91,7 +91,7 @@ public class MySqlUserQueryManager implements UserQueryManager {
 
         sqlQueryString = "UPDATE User SET token=? WHERE id=?";
 
-        try(PreparedStatement preparedStatement = mySqlConnection.prepareStatement(sqlQueryString)) {
+        try (PreparedStatement preparedStatement = mySqlConnection.prepareStatement(sqlQueryString)) {
             preparedStatement.setString(2, userId);
             preparedStatement.setString(1, token);
             preparedStatement.executeUpdate();

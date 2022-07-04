@@ -17,7 +17,6 @@ import javax.ws.rs.core.Response;
 
 import com.google.gson.Gson;
 import it.units.backend.database.MySqlTravelQueryManager;
-import it.units.backend.database.MySqlUserQueryManager;
 import it.units.backend.database.TravelQueryManager;
 import it.units.backend.exception.UserNotFoundException;
 import it.units.backend.filter.AuthenticationFilter;
@@ -59,7 +58,7 @@ public class TravelRestService extends ResourceConfig {
         
         try {
             String userId = headers.getRequestHeader(AuthenticationFilter.HEADER_PROPERTY_ID).get(0);
-            List travels = travelQueryManager.getTravels(userId);
+            List<Travel> travels = travelQueryManager.getTravels(userId);
             String travelsJson = new Gson().toJson(travels);
             return ResponseBuilder.createResponse(Response.Status.OK, travelsJson);
         } catch (UserNotFoundException e) {
@@ -80,7 +79,7 @@ public class TravelRestService extends ResourceConfig {
         
         try {
             String userId = headers.getRequestHeader(AuthenticationFilter.HEADER_PROPERTY_ID).get(0);
-            List travels = travelQueryManager.getTravels(userId, new Date(dateEpoch));
+            List<Travel> travels = travelQueryManager.getTravels(userId, new Date(dateEpoch));
             String travelsJson = new Gson().toJson(travels);
             return ResponseBuilder.createResponse(Response.Status.OK, travelsJson);
         } catch (UserNotFoundException e) {
