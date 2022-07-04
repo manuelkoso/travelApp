@@ -16,8 +16,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.google.gson.Gson;
-import it.units.backend.database.DBWrapper;
-import it.units.backend.database.MySqlWrapper;
+import it.units.backend.database.MySqlTravelQueryManager;
+import it.units.backend.database.MySqlUserQueryManager;
+import it.units.backend.database.TravelQueryManager;
 import it.units.backend.exception.UserNotFoundException;
 import it.units.backend.filter.AuthenticationFilter;
 import it.units.backend.model.Travel;
@@ -33,13 +34,13 @@ public class TravelRestService extends ResourceConfig {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response add(@Context HttpHeaders headers, String travelString) {
 
-        DBWrapper dBWrapper = MySqlWrapper.getInstance();
+        TravelQueryManager travelQueryManager = new MySqlTravelQueryManager();
         Travel travel = new Gson().fromJson(travelString, Travel.class);
 
         try {
             String userId = headers.getRequestHeader(AuthenticationFilter.HEADER_PROPERTY_ID).get(0);
             travel.setUserdId(userId);
-            dBWrapper.addTravel(travel);
+            travelQueryManager.addTravel(travel);
             return ResponseBuilder.createResponse(Response.Status.OK);
         } catch (UserNotFoundException e) {
             return ResponseBuilder.createResponse(Response.Status.NOT_FOUND, e.getMessage());
@@ -54,11 +55,11 @@ public class TravelRestService extends ResourceConfig {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getTravels(@Context HttpHeaders headers) {
         System.out.println("miao");
-        DBWrapper dBWrapper = MySqlWrapper.getInstance();
+        TravelQueryManager travelQueryManager = new MySqlTravelQueryManager();
         
         try {
             String userId = headers.getRequestHeader(AuthenticationFilter.HEADER_PROPERTY_ID).get(0);
-            List travels = dBWrapper.getTravels(userId);
+            List travels = travelQueryManager.getTravels(userId);
             String travelsJson = new Gson().toJson(travels);
             return ResponseBuilder.createResponse(Response.Status.OK, travelsJson);
         } catch (UserNotFoundException e) {
@@ -74,12 +75,12 @@ public class TravelRestService extends ResourceConfig {
     @RolesAllowed({"user"})
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllTravels(@Context HttpHeaders headers, @PathParam("dateEpoch") long dateEpoch) {
-        
-        DBWrapper dBWrapper = MySqlWrapper.getInstance();
+
+        TravelQueryManager travelQueryManager = new MySqlTravelQueryManager();
         
         try {
             String userId = headers.getRequestHeader(AuthenticationFilter.HEADER_PROPERTY_ID).get(0);
-            List travels = dBWrapper.getTravels(userId, new Date(dateEpoch));
+            List travels = travelQueryManager.getTravels(userId, new Date(dateEpoch));
             String travelsJson = new Gson().toJson(travels);
             return ResponseBuilder.createResponse(Response.Status.OK, travelsJson);
         } catch (UserNotFoundException e) {
@@ -95,14 +96,14 @@ public class TravelRestService extends ResourceConfig {
     @RolesAllowed({"user"})
     @Consumes(MediaType.APPLICATION_JSON)
     public Response modifyTravel(@Context HttpHeaders headers, String travelString) {
-        
-        DBWrapper dBWrapper = MySqlWrapper.getInstance();
+
+        TravelQueryManager travelQueryManager = new MySqlTravelQueryManager();
         Travel travel = new Gson().fromJson(travelString, Travel.class);
         
         try {
             String userId = headers.getRequestHeader(AuthenticationFilter.HEADER_PROPERTY_ID).get(0);
             travel.setUserdId(userId);
-            dBWrapper.modifyTravel(travel);
+            travelQueryManager.modifyTravel(travel);
             return ResponseBuilder.createResponse(Response.Status.OK);
         } catch (UserNotFoundException e) {
             return ResponseBuilder.createResponse(Response.Status.NOT_FOUND, e.getMessage());

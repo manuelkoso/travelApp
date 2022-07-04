@@ -12,8 +12,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import it.units.backend.database.DBWrapper;
-import it.units.backend.database.MySqlWrapper;
+import it.units.backend.database.MySqlUserQueryManager;
+import it.units.backend.database.UserQueryManager;
 import it.units.backend.exception.UserExistingException;
 import it.units.backend.exception.UserNotFoundException;
 import it.units.backend.filter.AuthenticationFilter;
@@ -34,11 +34,11 @@ public class UserRestService extends ResourceConfig {
     @Produces(MediaType.APPLICATION_JSON)
     public Response createUser(User user) {
 
-        DBWrapper dBWrapper = MySqlWrapper.getInstance();
+        UserQueryManager userQueryManager = new MySqlUserQueryManager();
 
         try {
             try {
-                dBWrapper.getUserByUsername(user.getUsername());
+                userQueryManager.getUserByUsername(user.getUsername());
                 throw new UserExistingException(user.getUsername());
             } catch (UserNotFoundException e) {
                 // store plain password
@@ -46,7 +46,7 @@ public class UserRestService extends ResourceConfig {
                 // generate password
                 user.setPassword(PasswordSecurity.generateHash(user.getPassword()));
                 // create user
-                dBWrapper.addUser(user);
+                userQueryManager.addUser(user);
                 // authenticate user
                 return authenticate(new Credentials(user.getUsername(), plainPassword));
             }
@@ -64,17 +64,17 @@ public class UserRestService extends ResourceConfig {
     @Produces(MediaType.APPLICATION_JSON)
     public Response authenticate(Credentials credentials) {
 
-        DBWrapper dBWrapper = MySqlWrapper.getInstance();
+        UserQueryManager userQueryManager = new MySqlUserQueryManager();
 
         try {
-            User user = dBWrapper.getUserByUsername(credentials.getUsername());
+            User user = userQueryManager.getUserByUsername(credentials.getUsername());
 
             if (!PasswordSecurity.validatePassword(credentials.getPassword(), user.getPassword())) {
                 return ResponseBuilder.createResponse(Response.Status.UNAUTHORIZED);
             }
 
             String token = TokenSecurity.generateJwtToken(user.getId());
-            dBWrapper.updateUserToken(user.getId(), token);
+            userQueryManager.updateUserToken(user.getId(), token);
 
             Map<String, Object> map = new HashMap<String, Object>();
             map.put(AuthenticationFilter.AUTHORIZATION_PROPERTY, token);

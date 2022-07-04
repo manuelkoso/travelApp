@@ -14,8 +14,8 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 
-import it.units.backend.database.DBWrapper;
-import it.units.backend.database.MySqlWrapper;
+import it.units.backend.database.MySqlUserQueryManager;
+import it.units.backend.database.UserQueryManager;
 import it.units.backend.exception.UserNotFoundException;
 import it.units.backend.model.User;
 import it.units.backend.restapi.ResponseBuilder;
@@ -68,11 +68,11 @@ public class AuthenticationFilter implements javax.ws.rs.container.ContainerRequ
             }
 
             // check if token matches an user token (set in user/authenticate)
-            DBWrapper dBWrapper = MySqlWrapper.getInstance();
+            UserQueryManager userQueryManager = new MySqlUserQueryManager();
             User user;
             
             try {
-                user = dBWrapper.getUserById(userId);
+                user = userQueryManager.getUserById(userId);
             } catch (UserNotFoundException e) {
                 requestContext.abortWith(
                         ResponseBuilder.createResponse(Response.Status.UNAUTHORIZED, ACCESS_DENIED)
