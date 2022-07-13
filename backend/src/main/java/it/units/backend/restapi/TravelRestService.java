@@ -47,27 +47,6 @@ public class TravelRestService extends ResourceConfig {
             return ResponseBuilder.createResponse(Response.Status.UNAUTHORIZED);
         }
     }
-
-    @GET
-    @Path("/get/")
-    @RolesAllowed({"user"})
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getTravels(@Context HttpHeaders headers) {
-        System.out.println("miao");
-        TravelQueryManager travelQueryManager = new MySqlTravelQueryManager();
-        
-        try {
-            String userId = headers.getRequestHeader(AuthenticationFilter.HEADER_PROPERTY_ID).get(0);
-            List<Travel> travels = travelQueryManager.getTravels(userId);
-            String travelsJson = new Gson().toJson(travels);
-            return ResponseBuilder.createResponse(Response.Status.OK, travelsJson);
-        } catch (UserNotFoundException e) {
-            return ResponseBuilder.createResponse(Response.Status.NOT_FOUND, e.getMessage());
-        } catch (Exception e) {
-            return ResponseBuilder.createResponse(Response.Status.UNAUTHORIZED);
-        }
-    }
-
     
     @GET
     @Path("/get/{dateEpoch}")
