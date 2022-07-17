@@ -31,12 +31,14 @@ public class MySqlTravelQueryManager implements TravelQueryManager {
         travel.setDate(c.getTime());
 
         try (PreparedStatement preparedStatement = mySqlConnection.prepareStatement(sqlQueryString)) {
+
             preparedStatement.setString(1, travel.getUserdId());
             preparedStatement.setString(2, travel.getPointsOfRoute().toString());
             preparedStatement.setString(3, travel.getPointsOfStages().toString());
             preparedStatement.setDate(4, new java.sql.Date(travel.getDate().getTime()));
             preparedStatement.setString(5, travel.getVehicle());
             preparedStatement.executeUpdate();
+
         } catch (SQLException e) {
             System.err.println(e);
         }
@@ -49,24 +51,29 @@ public class MySqlTravelQueryManager implements TravelQueryManager {
         List<Travel> travels = new ArrayList<>();
 
         try (PreparedStatement preparedStatement = mySqlConnection.prepareStatement(sqlQueryString)) {
+
             preparedStatement.setString(1, userId);
             preparedStatement.setDate(2, new java.sql.Date(date.getTime()));
             ResultSet resultSet = preparedStatement.executeQuery();
             Pattern pattern = Pattern.compile("(\\[\\-?\\d*.\\d*, \\-?\\d*.\\d*\\])");
+
             while (resultSet.next()) {
+
+                Matcher matcher;
                 List<String> pointsOfRoute = new ArrayList<>();
                 List<String> pointsOfStages = new ArrayList<>();
-                String vehicle = resultSet.getString("vehicle");
-                Matcher matcher = pattern.matcher(resultSet.getString("route"));
+
+                matcher = pattern.matcher(resultSet.getString("route"));
                 while (matcher.find()) {
                     pointsOfRoute.add(matcher.group(1));
                 }
+
                 matcher = pattern.matcher(resultSet.getString("stages"));
                 while (matcher.find()) {
                     pointsOfStages.add(matcher.group(1));
                 }
-                String id = resultSet.getString("id");
-                travels.add(new Travel(id, vehicle, pointsOfRoute, pointsOfStages));
+
+                travels.add(new Travel(resultSet.getString("id"), resultSet.getString("vehicle"), pointsOfRoute, pointsOfStages));
             }
         } catch (SQLException e) {
             System.err.println(e);
@@ -78,6 +85,7 @@ public class MySqlTravelQueryManager implements TravelQueryManager {
     public void modifyTravel(Travel travel) {
 
         sqlQueryString = "UPDATE Travel SET route=?,stages=?,date=?,vehicle=? WHERE id=?";
+
         //To refactor
         Calendar c = Calendar.getInstance();
         c.setTime(travel.getDate());
@@ -85,15 +93,18 @@ public class MySqlTravelQueryManager implements TravelQueryManager {
         travel.setDate(c.getTime());
 
         try (PreparedStatement preparedStatement = mySqlConnection.prepareStatement(sqlQueryString)) {
+
             preparedStatement.setString(1, travel.getPointsOfRoute().toString());
             preparedStatement.setString(2, travel.getPointsOfStages().toString());
             preparedStatement.setDate(3, new java.sql.Date(travel.getDate().getTime()));
             preparedStatement.setString(4, travel.getVehicle());
             preparedStatement.setString(5, travel.getId());
             preparedStatement.executeUpdate();
+
         } catch (SQLException e) {
             System.err.println(e);
         }
+
     }
 
 }
