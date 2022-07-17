@@ -29,7 +29,7 @@ public class MySqlUserQueryManager implements UserQueryManager {
             if (rs.next()) {
                 queriedUser = new User(userId, rs.getString("username"), rs.getString("password"), rs.getString("email"), rs.getString("token"));
             } else {
-                throw new UserNotFoundException(userId);
+                throw new UserNotFoundException("userId " + userId);
             }
 
         } catch (SQLException ex) {
@@ -65,6 +65,7 @@ public class MySqlUserQueryManager implements UserQueryManager {
     public void addUser(User user) throws UserExistingException {
 
         sqlQueryString = "INSERT INTO User(username,password,email) VALUES(?,?,?)";
+
         try (PreparedStatement preparedStatement = mySqlConnection.prepareStatement(sqlQueryString)) {
             try {
                 if (this.getUserByUsername(user.getUsername()) != null) {
