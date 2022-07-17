@@ -68,14 +68,19 @@ public class MySqlUserQueryManager implements UserQueryManager {
 
         try (PreparedStatement preparedStatement = mySqlConnection.prepareStatement(sqlQueryString)) {
             try {
+
                 if (this.getUserByUsername(user.getUsername()) != null) {
                     throw new UserExistingException(user.getUsername());
                 }
+
             } catch (UserNotFoundException e) {
-                preparedStatement.setString(3, user.getEmail());
-                preparedStatement.setString(2, user.getPassword());
+
                 preparedStatement.setString(1, user.getUsername());
+                preparedStatement.setString(2, user.getPassword());
+                preparedStatement.setString(3, user.getEmail());
+
                 preparedStatement.executeUpdate();
+
             }
         } catch (SQLException e) {
             System.err.println(e);
