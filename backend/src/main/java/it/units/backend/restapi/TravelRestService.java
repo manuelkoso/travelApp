@@ -4,12 +4,7 @@ import java.util.Date;
 import java.util.List;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -82,6 +77,27 @@ public class TravelRestService extends ResourceConfig {
             String userId = headers.getRequestHeader(AuthenticationFilter.HEADER_PROPERTY_ID).get(0);
             travel.setUserdId(userId);
             travelQueryManager.modifyTravel(travel);
+            return ResponseBuilder.createResponse(Response.Status.OK);
+        } catch (UserNotFoundException e) {
+            return ResponseBuilder.createResponse(Response.Status.NOT_FOUND, e.getMessage());
+        } catch (Exception e) {
+            return ResponseBuilder.createResponse(Response.Status.UNAUTHORIZED);
+        }
+    }
+
+    @DELETE
+    @Path("/delete")
+    @RolesAllowed({"user"})
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response deleteTravel(@Context HttpHeaders headers, String travelString) {
+
+        TravelQueryManager travelQueryManager = new MySqlTravelQueryManager();
+        Travel travel = new Gson().fromJson(travelString, Travel.class);
+
+        try {
+            String userId = headers.getRequestHeader(AuthenticationFilter.HEADER_PROPERTY_ID).get(0);
+            travel.setUserdId(userId);
+            travelQueryManager.deleteTravel(travel);
             return ResponseBuilder.createResponse(Response.Status.OK);
         } catch (UserNotFoundException e) {
             return ResponseBuilder.createResponse(Response.Status.NOT_FOUND, e.getMessage());

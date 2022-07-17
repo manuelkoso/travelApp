@@ -13,4 +13,5 @@ public interface TravelQueryManager {
 
     void modifyTravel(Travel travel);
 
+    void deleteTravel(Travel travel);
 }
