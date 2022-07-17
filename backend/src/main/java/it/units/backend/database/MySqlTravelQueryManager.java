@@ -24,7 +24,7 @@ public class MySqlTravelQueryManager implements TravelQueryManager {
 
         sqlQueryString = "INSERT INTO Travel(id_user,route,stages,date,vehicle) VALUES (?,?,?,?,?)";
 
-        //To refactor
+        // MySql remove one day...
         Calendar c = Calendar.getInstance();
         c.setTime(travel.getDate());
         c.add(Calendar.DATE, 1);
@@ -86,7 +86,7 @@ public class MySqlTravelQueryManager implements TravelQueryManager {
 
         sqlQueryString = "UPDATE Travel SET route=?,stages=?,date=?,vehicle=? WHERE id=?";
 
-        //To refactor
+        // MySql remove one day...
         Calendar c = Calendar.getInstance();
         c.setTime(travel.getDate());
         c.add(Calendar.DATE, 1);
