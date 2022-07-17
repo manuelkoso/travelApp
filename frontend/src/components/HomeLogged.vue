@@ -144,7 +144,7 @@
                       <button
                         type="button"
                         class="btn btn-sm btn-danger border-0 shadow-none"
-                        @click="deleteTravel(travel, i + 1)"
+                        @click="deleteTravel(travel)"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -393,7 +393,6 @@ export default {
       this.vehicleToModify = this.travelToModify.vehicle;
       this.travelToModify.index = index;
       opacSections[0].style.opacity = "0.3";
-      opacSections[1].style.opacity = "0.3";
       location.href = "#";
       location.href = "#modify-route";
       this.center = this.travelToModify.route.latlng[0];
@@ -402,7 +401,6 @@ export default {
       let opacSections = document.getElementsByClassName("opac");
       this.travelToModify = "";
       opacSections[0].style.opacity = "1";
-      opacSections[1].style.opacity = "1";
     },
     async handleSubmit() {
       const loader = this.$loading.show();
@@ -498,16 +496,16 @@ export default {
     async deleteTravel(travel) {
       const loader = this.$loading.show();
       await axios
-        .delete("/delete", {
-          id: travel.id,
-          date: travel.date,
-          vehicle: travel.vehicle,
-          pointsOfRoute: travel.route.latlng,
-          pointsOfStages: travel.stages.latlng,
+        .delete("travel/delete/" + travel.id, {
+          headers: {
+            "x-access-token": localStorage.getItem("x-access-token"),
+          },
         })
         .then(() => {
           loader.hide();
-          this.$toasted.show("Travel modified correctly!");
+          this.$toasted.show("Travel was deleted correctly!");
+          document.getElementById("nav-map-tab").click();
+          this.handleSubmit();
         })
         .catch((error) => {
           loader.hide();

@@ -86,18 +86,16 @@ public class TravelRestService extends ResourceConfig {
     }
 
     @DELETE
-    @Path("/delete")
+    @Path("/delete/{travelId}")
     @RolesAllowed({"user"})
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response deleteTravel(@Context HttpHeaders headers, String travelString) {
+    public Response deleteTravel(@Context HttpHeaders headers, @PathParam("travelId") String travelId) {
 
         TravelQueryManager travelQueryManager = new MySqlTravelQueryManager();
-        Travel travel = new Gson().fromJson(travelString, Travel.class);
 
         try {
             String userId = headers.getRequestHeader(AuthenticationFilter.HEADER_PROPERTY_ID).get(0);
-            travel.setUserdId(userId);
-            travelQueryManager.deleteTravel(travel);
+            travelQueryManager.deleteTravel(travelId);
             return ResponseBuilder.createResponse(Response.Status.OK);
         } catch (UserNotFoundException e) {
             return ResponseBuilder.createResponse(Response.Status.NOT_FOUND, e.getMessage());
