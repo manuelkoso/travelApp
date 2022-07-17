@@ -16,28 +16,26 @@ public class MySqlUserQueryManager implements UserQueryManager {
     private String sqlQueryString;
 
     @Override
-    public User getUserById(String id) throws UserNotFoundException {
+    public User getUserById(String userId) throws UserNotFoundException {
 
+        User queriedUser = null;
         sqlQueryString = "SELECT * FROM User WHERE id=?";
-        User user = null;
-        ResultSet rs = null;
 
         try (PreparedStatement preparedStatement = mySqlConnection.prepareStatement(sqlQueryString)) {
-            preparedStatement.setString(1, id);
-            rs = preparedStatement.executeQuery();
+
+            preparedStatement.setString(1, userId);
+            ResultSet rs = preparedStatement.executeQuery();
+
             if (rs.next()) {
-                String username = rs.getString("username");
-                String password = rs.getString("password");
-                String email = rs.getString("email");
-                String token = rs.getString("token");
-                user = new User(id, username, password, email, token);
+                queriedUser = new User(userId, rs.getString("username"), rs.getString("password"), rs.getString("email"), rs.getString("token"));
             } else {
-                throw new UserNotFoundException(id);
+                throw new UserNotFoundException(userId);
             }
+
         } catch (SQLException ex) {
             System.err.println(ex);
         }
-        return user;
+        return queriedUser;
     }
 
     @Override
