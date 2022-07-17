@@ -1,5 +1,9 @@
 package it.units.backend.filter;
 
+/*
+Credits to https://github.com/maltesander/rest-jersey2-json-jwt-authentication
+ */
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;

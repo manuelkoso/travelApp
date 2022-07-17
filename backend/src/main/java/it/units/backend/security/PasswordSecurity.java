@@ -1,5 +1,9 @@
 package it.units.backend.security;
 
+/*
+Credits to https://github.com/maltesander/rest-jersey2-json-jwt-authentication
+ */
+
 import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;

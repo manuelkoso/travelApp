@@ -1,5 +1,9 @@
 package it.units.backend.model;
 
+/*
+Credits to https://github.com/maltesander/rest-jersey2-json-jwt-authentication
+ */
+
 public class Credentials {
 	private String username = null;
 	private String password = null;

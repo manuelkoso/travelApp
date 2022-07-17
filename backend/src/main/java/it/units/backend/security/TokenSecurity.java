@@ -10,6 +10,9 @@ import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 import org.jose4j.lang.JoseException;
 
+/*
+Credits to https://github.com/maltesander/rest-jersey2-json-jwt-authentication
+ */
 public class TokenSecurity {
 	
 	private static RsaJsonWebKey rsaJsonWebKey = null;
