@@ -107,4 +107,19 @@ public class MySqlTravelQueryManager implements TravelQueryManager {
 
     }
 
+    @Override
+    public void deleteTravel(Travel travel) {
+
+        sqlQueryString = "DELETE from Travel WHERE id=?";
+
+        try (PreparedStatement preparedStatement = mySqlConnection.prepareStatement(sqlQueryString)) {
+
+            preparedStatement.setString(1, travel.getId());
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            System.err.println(e);
+        }
+    }
+
 }
