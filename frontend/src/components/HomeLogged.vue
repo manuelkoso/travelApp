@@ -144,6 +144,7 @@
                       <button
                         type="button"
                         class="btn btn-sm btn-danger border-0 shadow-none"
+                        @click="deleteTravel(travel, i + 1)"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -484,6 +485,29 @@ export default {
           this.notModify();
           document.getElementById("nav-map-tab").click();
           this.handleSubmit();
+        })
+        .catch((error) => {
+          loader.hide();
+          console.log(error);
+          localStorage.removeItem("x-access-token");
+          localStorage.removeItem("username");
+          this.userStore.$reset();
+          this.$router.push("/");
+        });
+    },
+    async deleteTravel(travel) {
+      const loader = this.$loading.show();
+      await axios
+        .delete("/delete", {
+          id: travel.id,
+          date: travel.date,
+          vehicle: travel.vehicle,
+          pointsOfRoute: travel.route.latlng,
+          pointsOfStages: travel.stages.latlng,
+        })
+        .then(() => {
+          loader.hide();
+          this.$toasted.show("Travel modified correctly!");
         })
         .catch((error) => {
           loader.hide();
