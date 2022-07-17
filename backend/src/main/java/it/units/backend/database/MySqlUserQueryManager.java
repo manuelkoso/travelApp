@@ -93,9 +93,12 @@ public class MySqlUserQueryManager implements UserQueryManager {
         sqlQueryString = "UPDATE User SET token=? WHERE id=?";
 
         try (PreparedStatement preparedStatement = mySqlConnection.prepareStatement(sqlQueryString)) {
-            preparedStatement.setString(2, userId);
+
             preparedStatement.setString(1, token);
+            preparedStatement.setString(2, userId);
+
             preparedStatement.executeUpdate();
+
         } catch (SQLException e) {
             System.err.println(e);
         }
