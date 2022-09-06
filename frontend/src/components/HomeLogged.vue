@@ -214,6 +214,12 @@
               type="button"
               class="btn btn-primary btn-sm btn-block"
               @click="submitModific()"
+              :disabled="
+                dateToModify === '' ||
+                vehicleToModify === '' ||
+                travelToModify.route.latlng.length === 0 ||
+                travelToModify.stages.latlng.length === 0
+              "
             >
               Modify
             </button>
