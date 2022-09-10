@@ -32,7 +32,7 @@ public class MySqlTravelQueryManager implements TravelQueryManager {
 
         try (PreparedStatement preparedStatement = mySqlConnection.prepareStatement(sqlQueryString)) {
 
-            preparedStatement.setString(1, travel.getUserdId());
+            preparedStatement.setString(1, travel.getUserId());
             preparedStatement.setString(2, travel.getPointsOfRoute().toString());
             preparedStatement.setString(3, travel.getPointsOfStages().toString());
             preparedStatement.setDate(4, new java.sql.Date(travel.getDate().getTime()));

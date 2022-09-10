@@ -32,7 +32,7 @@ const pinia = createPinia();
 const store = createPinia();
 
 // axios deafult api url
-axios.defaults.baseURL = "https://localhost:8443/webApp/api/";
+axios.defaults.baseURL = "https://localhost:8443/api/";
 
 //Vue.config.productionTip = false;
 

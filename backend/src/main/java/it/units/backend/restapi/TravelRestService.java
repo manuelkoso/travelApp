@@ -33,7 +33,7 @@ public class TravelRestService extends ResourceConfig {
 
         try {
             String userId = headers.getRequestHeader(AuthenticationFilter.HEADER_PROPERTY_ID).get(0);
-            travel.setUserdId(userId);
+            travel.setUserId(userId);
             travelQueryManager.addTravel(travel);
             return ResponseBuilder.createResponse(Response.Status.OK);
         } catch (UserNotFoundException e) {
@@ -75,7 +75,7 @@ public class TravelRestService extends ResourceConfig {
         
         try {
             String userId = headers.getRequestHeader(AuthenticationFilter.HEADER_PROPERTY_ID).get(0);
-            travel.setUserdId(userId);
+            travel.setUserId(userId);
             travelQueryManager.modifyTravel(travel);
             return ResponseBuilder.createResponse(Response.Status.OK);
         } catch (UserNotFoundException e) {
@@ -94,7 +94,6 @@ public class TravelRestService extends ResourceConfig {
         TravelQueryManager travelQueryManager = new MySqlTravelQueryManager();
 
         try {
-            String userId = headers.getRequestHeader(AuthenticationFilter.HEADER_PROPERTY_ID).get(0);
             travelQueryManager.deleteTravel(travelId);
             return ResponseBuilder.createResponse(Response.Status.OK);
         } catch (UserNotFoundException e) {

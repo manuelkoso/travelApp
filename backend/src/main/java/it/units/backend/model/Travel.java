@@ -21,9 +21,9 @@ public class Travel implements JsonSerializable{
         this.pointsOfStages = pointsOfStages;
     }
 
-    public Travel(String id, String userdId, Date date, String vehicle, List pointsOfRoute, List pointsOfStages) {
+    public Travel(String id, String userId, Date date, String vehicle, List pointsOfRoute, List pointsOfStages) {
         this.id = id;
-        this.userId = userdId;
+        this.userId = userId;
         this.date = date;
         this.vehicle = vehicle;
         this.pointsOfRoute = pointsOfRoute;
@@ -53,12 +53,12 @@ public class Travel implements JsonSerializable{
         this.id = id;
     }
 
-    public String getUserdId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserdId(String userdId) {
-        this.userId = userdId;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     
