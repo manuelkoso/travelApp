@@ -92,7 +92,7 @@ public class AuthenticationFilter implements javax.ws.rs.container.ContainerRequ
                 return;
             }
 
-            // set header param email for user identification in rest service - do not decode jwt twice in rest services
+            // set header param id for user identification in rest service - do not decode jwt twice in rest services
             List<String> idList = new ArrayList<String>();
             idList.add(userId);
             headers.put(HEADER_PROPERTY_ID, idList);

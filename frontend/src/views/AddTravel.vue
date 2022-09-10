@@ -221,7 +221,6 @@ export default {
           localStorage.removeItem("x-access-token");
           localStorage.removeItem("username");
           this.userStore.$reset();
-          this.$toasted.show("Travel saved correctly!");
           this.$router.push("/");
         });
     },
