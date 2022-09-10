@@ -5,11 +5,11 @@
         <div class="col col-7-sm">
           <h1>
             <strong
-              >Store your travel, <br />
+              >Store your travels, <br />
               your memories.</strong
             >
           </h1>
-          <h3 class="my-3">Save, visualize, modify your daily travel</h3>
+          <h3 class="my-3">Save, visualize, modify your daily travels</h3>
           <router-link :to="{ name: 'SignUp' }"
             ><button class="btn btn-primary">
               SignUp for free
@@ -48,10 +48,6 @@
       <h1 class="mb-5 text-center">Interactive map</h1>
       <div class="row">
         <div class="col">
-          <h2>Simply track your route and stages</h2>
-          <p>Just click on the map and track your memory.</p>
-        </div>
-        <div class="col-sm-8">
           <div class="map border rounded shadow border-3 border-dark mb-5">
             <l-map
               ref="map"
